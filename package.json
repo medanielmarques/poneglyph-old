@@ -1,14 +1,17 @@
 {
-  "name": "poneglyph",
+  "name": "poneglyph.app",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prisma-studio": "prisma studio",
     "postinstall": "prisma generate && prisma format",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "type-check": "pnpm tsc --noEmit"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "1.0.5",

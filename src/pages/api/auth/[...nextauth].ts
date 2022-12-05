@@ -1,11 +1,11 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import NextAuth, { type NextAuthOptions } from 'next-auth'
 import DiscordProvider from 'next-auth/providers/discord'
 import GithubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-import { env } from "../../../env/server.mjs";
-import { prisma } from "../../../server/db/client";
+import { env } from '../../../env/server.mjs'
+import { prisma } from '../../../server/db/client'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -34,6 +34,6 @@ export const authOptions: NextAuthOptions = {
       return session
     },
   },
-};
+}
 
-export default NextAuth(authOptions);
+export default NextAuth(authOptions)

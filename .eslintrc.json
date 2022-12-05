@@ -4,7 +4,11 @@
     "project": "./tsconfig.json"
   },
   "plugins": ["@typescript-eslint"],
-  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
   "rules": {
     "@next/next/no-img-element": "off",
     "@next/next/no-html-link-for-pages": "off",
@@ -14,5 +18,13 @@
     ],
     "react/self-closing-comp": ["error", { "component": true, "html": true }],
     "@typescript-eslint/consistent-type-imports": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "plugins": ["@typescript-eslint"],
+      "parser": "@typescript-eslint/parser"
+    }
+  ]
 }
