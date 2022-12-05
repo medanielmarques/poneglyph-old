@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "Prisma.prisma", // syntax|format|completion for prisma
+    "esbenp.prettier-vscode", // prettier plugin
+    "bradlc.vscode-tailwindcss" // hinting / autocompletion for tailwind
+  ]
+}
