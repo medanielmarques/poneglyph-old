@@ -3,11 +3,15 @@ import NextAuth, { type NextAuthOptions } from 'next-auth'
 import DiscordProvider from 'next-auth/providers/discord'
 import GithubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
+import TwitterProvider from 'next-auth/providers/twitter'
 
 import { env } from '../../../env/server.mjs'
 import { prisma } from '../../../server/db/client'
 
 export const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: '/sign-in',
+  },
   adapter: PrismaAdapter(prisma),
   providers: [
     DiscordProvider({
@@ -21,6 +25,11 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+    }),
+    TwitterProvider({
+      clientId: env.TWITTER_CLIENT_ID,
+      clientSecret: env.TWITTER_CLIENT_SECRET,
+      version: '2.0',
     }),
   ],
   theme: {
