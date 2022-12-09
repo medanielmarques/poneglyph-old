@@ -16,8 +16,6 @@ import {
 export const getStaticProps: GetStaticProps = async () => {
   const session = await getSession()
 
-  console.log(session)
-
   if (session) {
     return {
       props: {},
