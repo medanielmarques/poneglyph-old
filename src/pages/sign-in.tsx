@@ -43,6 +43,8 @@ export const getStaticProps: GetStaticProps = async () => {
     `${process.env.NEXTAUTH_URL}/api/auth/providers`
   ).then(async (res) => await res.json())
 
+  console.log(await getProviders())
+
   // const providers = Object.values(resProviders || {}).map(
   //   (provider) => provider
   // )
