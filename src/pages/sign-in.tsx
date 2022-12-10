@@ -1,6 +1,8 @@
 import { GetStaticProps } from 'next'
+import { BuiltInProviderType } from 'next-auth/providers'
 import {
   ClientSafeProvider,
+  LiteralUnion,
   getProviders,
   getSession,
   signIn,
@@ -14,22 +16,24 @@ import {
 } from 'react-icons/fa'
 
 export const getStaticProps: GetStaticProps = async () => {
-  const session = await getSession()
+  // const session = await getSession()
 
-  if (session) {
-    return {
-      props: {},
-      redirect: {
-        destination: '/',
-      },
-    }
-  }
+  // console.log(session ? true : false)
 
-  const resProviders = await getProviders()
+  // if (session) {
+  //   return {
+  //     props: {},
+  //     redirect: {
+  //       destination: '/',
+  //     },
+  //   }
+  // }
 
-  const providers = Object.values(resProviders || {}).map(
-    (provider) => provider
-  )
+  const providers = await getProviders()
+
+  // const providers = Object.values(resProviders || {}).map(
+  //   (provider) => provider
+  // )
 
   return {
     props: {
@@ -41,7 +45,10 @@ export const getStaticProps: GetStaticProps = async () => {
 export default function SignInPage({
   providers,
 }: {
-  providers: ClientSafeProvider[]
+  providers: Record<
+    LiteralUnion<BuiltInProviderType, string>,
+    ClientSafeProvider
+  >
 }) {
   return (
     <div className='min-h-screen'>
@@ -65,9 +72,16 @@ export default function SignInPage({
   )
 }
 
-const ProvidersList = ({ providers }: { providers: ClientSafeProvider[] }) => (
+const ProvidersList = ({
+  providers,
+}: {
+  providers: Record<
+    LiteralUnion<BuiltInProviderType, string>,
+    ClientSafeProvider
+  >
+}) => (
   <div className='flex flex-wrap gap-3'>
-    {providers.map((provider) => (
+    {Object.values(providers).map((provider) => (
       <SignInButton key={provider.id} provider={provider} />
     ))}
   </div>
