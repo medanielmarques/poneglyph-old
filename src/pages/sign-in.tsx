@@ -14,6 +14,7 @@ import {
   FaGoogle as GoogleIcon,
   FaTwitter as TwitterIcon,
 } from 'react-icons/fa'
+import { trpc } from 'utils/trpc'
 
 export const getStaticProps: GetStaticProps = async () => {
   // const session = await getSession()
@@ -29,6 +30,8 @@ export const getStaticProps: GetStaticProps = async () => {
   //   }
   // }
 
+  const user = await prisma?.user.findFirst()
+
   const providers = await getProviders()
 
   // const providers = Object.values(resProviders || {}).map(
@@ -38,23 +41,29 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       providers,
+      trpcMessage: user?.name,
     },
   }
 }
 
 export default function SignInPage({
   providers,
+  trpcMessage,
 }: {
   providers: Record<
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
   >
+  trpcMessage: string
 }) {
   return (
     <div className='min-h-screen'>
       <div className='flex min-h-screen flex-col items-center justify-center space-y-8 py-12 sm:px-6 lg:space-y-12 lg:px-8'>
         <Image src='/logo.svg' alt='Poneglyph logo' width={250} height={49} />
 
+        <button className='text-white text-2xl'>
+          User's name: {trpcMessage}
+        </button>
         <div
           aria-label='Sign in form'
           className='w-full space-y-4 sm:mx-auto sm:max-w-lg '
