@@ -31,7 +31,17 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const user = await prisma?.user.findFirst()
 
-  const providers = await getProviders()
+  console.log('##########################################')
+  console.log('##########################################')
+  console.log('##########################################')
+  console.log('NEXTAUTH_URL: ' + process.env.NEXTAUTH_URL)
+  console.log('##########################################')
+  console.log('##########################################')
+  console.log('##########################################')
+
+  const providers = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/auth/providers`
+  ).then(async (res) => await res.json())
 
   // const providers = Object.values(resProviders || {}).map(
   //   (provider) => provider
