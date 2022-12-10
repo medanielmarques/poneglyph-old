@@ -4,7 +4,6 @@ import {
   ClientSafeProvider,
   LiteralUnion,
   getProviders,
-  getSession,
   signIn,
 } from 'next-auth/react'
 import Image from 'next/image'
@@ -14,7 +13,7 @@ import {
   FaGoogle as GoogleIcon,
   FaTwitter as TwitterIcon,
 } from 'react-icons/fa'
-import { trpc } from 'utils/trpc'
+import { prisma } from 'server/db/client'
 
 export const getStaticProps: GetStaticProps = async () => {
   // const session = await getSession()
