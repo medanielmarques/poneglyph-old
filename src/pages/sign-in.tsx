@@ -1,9 +1,8 @@
-import { GetStaticProps } from 'next'
-import { BuiltInProviderType } from 'next-auth/providers'
+import { GetServerSideProps } from 'next'
 import {
   ClientSafeProvider,
-  LiteralUnion,
   getProviders,
+  getSession,
   signIn,
 } from 'next-auth/react'
 import Image from 'next/image'
@@ -13,74 +12,48 @@ import {
   FaGoogle as GoogleIcon,
   FaTwitter as TwitterIcon,
 } from 'react-icons/fa'
-import { prisma } from 'server/db/client'
 
-export const getStaticProps: GetStaticProps = async () => {
-  // const session = await getSession()
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context)
 
-  // console.log(session ? true : false)
+  if (session) {
+    return {
+      props: {},
+      redirect: {
+        destination: '/',
+      },
+    }
+  }
 
-  // if (session) {
-  //   return {
-  //     props: {},
-  //     redirect: {
-  //       destination: '/',
-  //     },
-  //   }
-  // }
+  const resProviders = await getProviders()
 
-  const user = await prisma?.user.findFirst()
-
-  console.log('##########################################')
-  console.log('##########################################')
-  console.log('##########################################')
-  console.log('NEXTAUTH_URL: ' + process.env.NEXTAUTH_URL)
-  console.log('##########################################')
-  console.log('##########################################')
-  console.log('##########################################')
-
-  const providers = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/auth/providers`
-  ).then(async (res) => await res.json())
-
-  console.log(await getProviders())
-
-  // const providers = Object.values(resProviders || {}).map(
-  //   (provider) => provider
-  // )
+  const providers = Object.values(resProviders || {}).map(
+    (provider) => provider
+  )
 
   return {
     props: {
       providers,
-      trpcMessage: user?.name,
     },
   }
 }
 
 export default function SignInPage({
   providers,
-  trpcMessage,
 }: {
-  providers: Record<
-    LiteralUnion<BuiltInProviderType, string>,
-    ClientSafeProvider
-  >
-  trpcMessage: string
+  providers: ClientSafeProvider[]
 }) {
   return (
     <div className='min-h-screen'>
       <div className='flex min-h-screen flex-col items-center justify-center space-y-8 py-12 sm:px-6 lg:space-y-12 lg:px-8'>
         <Image src='/logo.svg' alt='Poneglyph logo' width={250} height={49} />
 
-        <button className='text-white text-2xl'>
-          User's name: {trpcMessage}
-        </button>
         <div
           aria-label='Sign in form'
           className='w-full space-y-4 sm:mx-auto sm:max-w-lg '
         >
-          <div className='border-y border-slate-700 bg-slate-800 text-slate-200 py-8 px-4 shadow sm:rounded-lg sm:border-x sm:px-10 flex flex-col gap-7 justify-between'>
-            <span className='text-gray-300 mx-auto'>Sign in with</span>
+          <div className='flex flex-col justify-between gap-7 border-y border-slate-700 bg-slate-800 py-8 px-4 text-slate-200 shadow sm:rounded-lg sm:border-x sm:px-10'>
+            <span className='mx-auto text-gray-300'>Sign in with</span>
 
             {providers ? <ProvidersList providers={providers} /> : null}
 
@@ -92,16 +65,9 @@ export default function SignInPage({
   )
 }
 
-const ProvidersList = ({
-  providers,
-}: {
-  providers: Record<
-    LiteralUnion<BuiltInProviderType, string>,
-    ClientSafeProvider
-  >
-}) => (
+const ProvidersList = ({ providers }: { providers: ClientSafeProvider[] }) => (
   <div className='flex flex-wrap gap-3'>
-    {Object.values(providers).map((provider) => (
+    {providers.map((provider) => (
       <SignInButton key={provider.id} provider={provider} />
     ))}
   </div>
@@ -116,10 +82,10 @@ const providersIcons: Record<string, JSX.Element> = {
 
 const SignInButton = ({ provider }: { provider: ClientSafeProvider }) => (
   <div
-    className='flex gap-2 text-center items-center py-3 px-14 text-lg font-semibold rounded-md border-slate-700 border-solid border hover:bg-slate-700 cursor-pointer'
+    className='flex cursor-pointer items-center gap-2 rounded-md border border-solid border-slate-700 py-3 px-14 text-center text-lg font-semibold hover:bg-slate-700'
     onClick={() =>
       signIn(provider.id, {
-        callbackUrl: '',
+        callbackUrl: '/',
       })
     }
   >
@@ -129,9 +95,9 @@ const SignInButton = ({ provider }: { provider: ClientSafeProvider }) => (
 )
 
 const SigninTermsAndPolicy = () => (
-  <span className='text-gray-400 mx-auto text-center w-72 text-sm'>
+  <span className='mx-auto w-72 text-center text-sm text-gray-400'>
     By signing in, you agree to our{' '}
-    <span className='text-pink-400 cursor-pointer'>Terms of service</span> and{' '}
-    <span className='text-pink-400 cursor-pointer'>Privacy Policy</span>
+    <span className='cursor-pointer text-pink-400'>Terms of service</span> and{' '}
+    <span className='cursor-pointer text-pink-400'>Privacy Policy</span>
   </span>
 )
