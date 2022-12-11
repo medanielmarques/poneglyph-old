@@ -9,7 +9,7 @@ import { prisma } from 'server/db/client'
 
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: '/sign-in',
+    signIn: '/auth/sign-in',
   },
   adapter: PrismaAdapter(prisma),
   providers: [

@@ -6,6 +6,7 @@ import {
   signIn,
 } from 'next-auth/react'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import {
   FaDiscord as DiscordIcon,
   FaGithub as GithubIcon,
@@ -38,11 +39,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
+const errorMessage =
+  'An error ocurred during sign in. Please try again. If the problem persists, try signin in with a different account.'
+
 export default function SignInPage({
   providers,
 }: {
   providers: ClientSafeProvider[]
 }) {
+  const router = useRouter()
+  const { error } = router.query
+
   return (
     <div className='min-h-screen'>
       <div className='flex min-h-screen flex-col items-center justify-center space-y-8 py-12 sm:px-6 lg:space-y-12 lg:px-8'>
@@ -50,10 +57,14 @@ export default function SignInPage({
 
         <div
           aria-label='Sign in form'
-          className='w-full space-y-4 sm:mx-auto sm:max-w-lg '
+          className='w-full space-y-4 sm:mx-auto sm:max-w-lg'
         >
           <div className='flex flex-col justify-between gap-7 border-y border-slate-700 bg-slate-800 py-8 px-4 text-slate-200 shadow sm:rounded-lg sm:border-x sm:px-10'>
             <span className='mx-auto text-gray-300'>Sign in with</span>
+
+            <div className='mx-auto text-center text-sm text-red-400'>
+              {error ? errorMessage : null}
+            </div>
 
             {providers ? <ProvidersList providers={providers} /> : null}
 
@@ -66,7 +77,7 @@ export default function SignInPage({
 }
 
 const ProvidersList = ({ providers }: { providers: ClientSafeProvider[] }) => (
-  <div className='flex flex-wrap gap-3'>
+  <div className='grid grid-cols-2 gap-3'>
     {providers.map((provider) => (
       <SignInButton key={provider.id} provider={provider} />
     ))}
