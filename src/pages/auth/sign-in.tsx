@@ -1,3 +1,4 @@
+import { useAuthError } from 'lib/hooks/use-auth-error'
 import { GetServerSideProps } from 'next'
 import {
   ClientSafeProvider,
@@ -6,7 +7,6 @@ import {
   signIn,
 } from 'next-auth/react'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import {
   FaDiscord as DiscordIcon,
   FaGithub as GithubIcon,
@@ -39,16 +39,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-const errorMessage =
-  'An error ocurred during sign in. Please try again. If the problem persists, try signin in with a different account.'
-
 export default function SignInPage({
   providers,
 }: {
   providers: ClientSafeProvider[]
 }) {
-  const router = useRouter()
-  const { error } = router.query
+  const { error } = useAuthError()
 
   return (
     <div className='min-h-screen'>
@@ -62,9 +58,7 @@ export default function SignInPage({
           <div className='flex flex-col justify-between gap-7 border-y border-slate-700 bg-slate-800 py-8 px-4 text-slate-200 shadow sm:rounded-lg sm:border-x sm:px-10'>
             <span className='mx-auto text-gray-300'>Sign in with</span>
 
-            <div className='mx-auto text-center text-sm text-red-400'>
-              {error ? errorMessage : null}
-            </div>
+            {error ? <AuthError error={error} /> : null}
 
             {providers ? <ProvidersList providers={providers} /> : null}
 
@@ -75,6 +69,12 @@ export default function SignInPage({
     </div>
   )
 }
+
+const AuthError = ({ error }: { error: string }) => (
+  <div className='mx-auto rounded-lg border border-slate-700 p-4 text-center text-red-400'>
+    {error}
+  </div>
+)
 
 const ProvidersList = ({ providers }: { providers: ClientSafeProvider[] }) => (
   <div className='grid grid-cols-2 gap-3'>
